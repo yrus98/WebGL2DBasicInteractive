@@ -12,8 +12,6 @@ export default class Transform
 		this.modelTransformMatrix = mat4.create();
 		mat4.identity(this.modelTransformMatrix);
 
-		this.mvpMatrix = this.modelTransformMatrix;
-
 		this.updateMVPMatrix();
 	}
 

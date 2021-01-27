@@ -1,4 +1,4 @@
-import { vec3, mat4 } from 'https://cdn.skypack.dev/gl-matrix';
+import { vec3, vec4, mat4 } from 'https://cdn.skypack.dev/gl-matrix';
 
 import Transform from './transform.js';
 
@@ -70,5 +70,28 @@ export default class Rectangle
 
 	getPos(i){
 		return this.transform.getTranslate()[i];
+	}
+
+	getBoundaries(){
+		let minX = 1000, maxX = -1000, minY = 1000, maxY = -1000;
+		let tempMatrix = mat4.create();
+		for (let i = 0; i < 4; i++) {
+
+			let tempVec = vec4.fromValues(this.vertexAttributesData[i * 6], this.vertexAttributesData[i * 6 + 1], 0, 1);
+			mat4.multiply(tempMatrix, this.transform.getMVPMatrix(), tempVec);
+			if(minX > tempMatrix[0]){
+				minX = tempMatrix[0];
+			}
+			if(maxX < tempMatrix[0]){
+				maxX = tempMatrix[0];
+			}
+			if(minY > tempMatrix[1]){
+				minY = tempMatrix[1];
+			}
+			if(maxY < tempMatrix[1]){
+				maxY = tempMatrix[1];
+			}
+		}
+		return [minX, maxX, minY, maxY];
 	}
 }

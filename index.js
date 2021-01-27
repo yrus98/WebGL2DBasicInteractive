@@ -12,7 +12,7 @@ let controlModeNames = ['Drawing','Instance-Transformation','Scene-Transformatio
 let shapeBtn = document.getElementById('shapeBtn');
 let shapeNames = ['Rectangle','Square','Circle'];
 let clearBtn = document.getElementById('clearBtn');
-
+let keyRecordiv = document.getElementById('keyRecord');
 
 const renderer = new Renderer();
 const gl = renderer.webGlContext();
@@ -115,7 +115,7 @@ renderer.getCanvas().addEventListener('click', (event) =>
 				}
 			}else if(primitive.constructor.name === 'Circle'){
 				if( Math.pow(primitive.getPos(0) - clipCoordinates[0],2) + 
-						Math.pow(primitive.getPos(1) - clipCoordinates[1],2) < Math.pow(primitive.radius, 2))
+						Math.pow(primitive.getPos(1) - clipCoordinates[1],2) < Math.pow(primitive.transform.getScale() * primitive.radius, 2))
 					tempIndex = index;
 			}
 		});
@@ -137,6 +137,7 @@ renderer.getCanvas().addEventListener('click', (event) =>
 });
 
 window.addEventListener('keydown', function (event){
+	keyRecord.innerHTML = event.key;
 	switch(event.key){
 		case 'r':
 			shapeMode = 0;
@@ -218,30 +219,30 @@ function changeControlMode(){
 		globCenterY = 0;
 		let minX = 100, maxX = -100, minY = 100, maxY = -100;
 		primitives.forEach(function(primitive, index, arr){
-			// globCenterX += primitive.getPos(0);
-			// globCenterY += primitive.getPos(1);
 
-			if (minX > primitive.getPos(0)) {
-				minX = primitive.getPos(0);
+			let tempBoundaries = primitive.getBoundaries();
+
+			if(minX > tempBoundaries[0]){
+				minX = tempBoundaries[0];
 			}
-			if (maxX < primitive.getPos(0)) {
-				maxX = primitive.getPos(0);
+			if(maxX < tempBoundaries[1]){
+				maxX = tempBoundaries[1];
 			}
-			if (minY > primitive.getPos(1)) {
-				minY = primitive.getPos(1);
+			if(minY > tempBoundaries[2]){
+				minY = tempBoundaries[2];
 			}
-			if (maxY < primitive.getPos(1)) {
-				maxY = primitive.getPos(1);
+			if(maxY < tempBoundaries[3]){
+				maxY = tempBoundaries[3];
 			}
 		});
-		// globCenterX/= primitives.length;
-		// globCenterY/= primitives.length;
-
+		
 		globCenterX = (minX + maxX)/2;
 		globCenterY = (minY + maxY)/2;
 		console.log(globCenterX, globCenterY);
 
 		globalTransform.setTranslate(vec3.fromValues(globCenterX, globCenterY, 0));
+		globalTransform.setRotate(0, vec3.fromValues(0, 0, 1));
+		globalTransform.setScale(vec3.fromValues(1, 1, 1));
 
 		tXCon.setValue(globalTransform.getTranslate()[0]);
 		tYCon.setValue(globalTransform.getTranslate()[1]);

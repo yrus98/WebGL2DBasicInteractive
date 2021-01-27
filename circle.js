@@ -79,31 +79,14 @@ export default class Circle
 	}
 
 	getBoundaries(){
-		let minX = 1000, maxX = -1000, minY = 1000, maxY = -1000;
-		let edgeVertices = [this.radius, 0, 
-							0, this.radius,
-							-this.radius, 0,
-							0, -this.radius];
-		let tempMatrix = mat4.create();
-		for (let i = 0; i < 4; i++) {
 
-			let tempVec = vec4.fromValues(edgeVertices[2 * i], edgeVertices[i * 2 + 1], 0, 1);
-			mat4.multiply(tempMatrix, this.transform.getMVPMatrix(), tempVec);
-			
-			if(minX > tempMatrix[0]){
-				minX = tempMatrix[0];
-			}
-			if(maxX < tempMatrix[0]){
-				maxX = tempMatrix[0];
-			}
-			if(minY > tempMatrix[1]){
-				minY = tempMatrix[1];
-			}
-			if(maxY < tempMatrix[1]){
-				maxY = tempMatrix[1];
-			}
-		}
-
+		let posX = this.getPos(0);
+		let posY = this.getPos(1);
+		let scale = this.transform.getScale();
+		let minX = posX - scale * this.radius;
+		let maxX = posX + scale * this.radius;
+		let minY = posY - scale * this.radius;
+		let maxY = posY + scale * this.radius;
 		return [minX, maxX, minY, maxY];
 	}
 }

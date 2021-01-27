@@ -159,7 +159,8 @@ window.addEventListener('keydown', function (event){
 			}
 			break;
 		case "Escape":
-			window.location = window.location;
+			// window.location = window.location;
+			clearCanvas();
 			break;
 
 		case "ArrowUp":
